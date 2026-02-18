@@ -80,7 +80,6 @@ def extract_and_plot():
 
     #plot
     
-
     plt.scatter(x_tl, y, s = 4, c = "r")
     plt.plot(x_kauff, y_kauff, linestyle = "--", c = "k", label = "Kauffman 2003")
     plt.plot(x_kewley, y_kewleyn2, linestyle = "-", c = "k", label = "Kewley 2001")
