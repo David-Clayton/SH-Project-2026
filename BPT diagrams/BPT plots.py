@@ -89,7 +89,7 @@ def extract_and_plot():
 
     #plot
     #NII BPT diagram
-    plt.plot(x_kauff, y_kauff, linestyle = "--", c = "k", label = "Kauffman 2003")
+    plt.plot(x_kauff, y_kauff, linestyle = "--", c = "k", label = "Kauffmann 2003")
     plt.plot(x_kewley, y_kewleyn2, linestyle = "-", c = "k", label = "Kewley 2001")
     plt.errorbar(nii_ha, oiii_hb, yerr = oiii_hb_err, xerr = nii_ha_err, fmt='none', ecolor= "r")
     plt.xlabel("log([NII]6584/Halpha)")
