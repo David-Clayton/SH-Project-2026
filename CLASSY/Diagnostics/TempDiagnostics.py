@@ -8,7 +8,7 @@ def extract_and_plot():
       """Extracts necessary emission lines, use getCrossTemDen to calculate T_e in low and high-
       ionisation regions and plot them together, optionally including expanded T_e datasets for galaxies
       without necessary emission lines using Garnett's 1992 formula"""
-      filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Diagnostics\Final_CLASSY_EMISSION_LINES_David.xlsx"
+      filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\CLASSY\Final_CLASSY_EMISSION_LINES_David.xlsx"
 
       O2 = pn.Atom("O", 2)
       O3 = pn.Atom("O", 3)
@@ -64,7 +64,7 @@ def extract_and_plot():
       #Plot galaxy temperature data 
 
       #Errors
-      errpath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Diagnostics\Tempswerrors.csv"
+      errpath = r"C:\Users\drcla\OneDrive\Senior Honours Project\CLASSY\Diagnostics\Tempswerrors.csv"
       Tiii_up = pd.read_csv(errpath, delimiter = ",", usecols = [1], header = 0).to_numpy().flatten()
       Tiii_down = pd.read_csv(errpath, delimiter = ",", usecols = [2], header = 0).to_numpy().flatten()
       Tii_up = pd.read_csv(errpath, delimiter = ",", usecols = [4], header = 0).to_numpy().flatten()
@@ -102,7 +102,7 @@ def extract_and_plot():
 def fit_fcn(a, b, x):
     return a*x + b
 
-def test_garnett():
+def test_garnett(o_iii_T_e, o_ii_T_e):
       o_iii_T_e = np.nan_to_num(o_iii_T_e)
       o_ii_T_e = np.nan_to_num(o_ii_T_e)
 

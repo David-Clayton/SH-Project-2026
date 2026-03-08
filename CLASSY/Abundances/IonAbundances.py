@@ -8,11 +8,11 @@ def nicholls(metallicity):
     a = -1.732
     b = 2.19
 
-    ratio = np.log10(10 ** a + 10 ** (metallicity - 12 + b))
+    ratio = np.log10(10 ** a + 10 ** (metallicity -12 + b))
     return ratio
 
 def main():
-    filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Abundances\Final_CLASSY_EMISSION_LINES_David.xlsx"
+    filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\CLASSY\Final_CLASSY_EMISSION_LINES_David.xlsx"
 
     O2 = pn.Atom("O", 2)
     O3 = pn.Atom("O", 3)
@@ -99,25 +99,26 @@ def main():
     log_n_o = np.log10(n_o)
 
     #Errors
-    err_filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Abundances\Abundanceswerrors.csv"
+    err_filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\CLASSY\Abundances\Abundanceswerrors.csv"
     metallicity_upper = pd.read_csv(err_filepath, delimiter = ",", usecols = [0], header = 0).to_numpy().flatten()
     metallicity_lower = pd.read_csv(err_filepath, delimiter = ",", usecols = [1], header = 0).to_numpy().flatten()
     abund_ratio_upper = pd.read_csv(err_filepath, delimiter = ",", usecols = [2], header = 0).to_numpy().flatten()
     abund_ratio_lower = pd.read_csv(err_filepath, delimiter = ",", usecols = [3], header = 0).to_numpy().flatten()
 
     #stack
-    met_err = np.stack((metallicity_upper, metallicity_lower), axis = 0)
-    ratio_err = np.stack((abund_ratio_upper, abund_ratio_lower), axis = 0) #N/O
+    met_err = np.stack((metallicity_lower, metallicity_upper), axis = 0)
+    ratio_err = np.stack((abund_ratio_lower, abund_ratio_upper), axis = 0) #N/O
 
     x_nicholls = np.linspace(7.2, 9.3, 1000)
     y_nicholls = nicholls(x_nicholls)
 
     #Plot to compare to classy xii fig 2
     plt.errorbar(metallicity[0:45], log_n_o[0:45], yerr = ratio_err, xerr = met_err, linestyle = "", marker = "^", color = "b")
-    plt.plot(x_nicholls, y_nicholls, color = "green")
+    plt.plot(x_nicholls, y_nicholls, color = "green", label = "Nicholls 2017")
     plt.xlabel("12 + log(O/H)")
     plt.ylabel("log(N/O)")
     plt.title("Metallicity")
+    plt.legend()
     plt.savefig("Metallicity")
     plt.show()
 
