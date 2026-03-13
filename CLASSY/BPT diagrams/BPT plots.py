@@ -13,37 +13,37 @@ def s2kewley(s2ha):
 def o1kewley(o1ha):
     return 0.73 / (o1ha + 0.59) + 1.33
 
-def extract_and_plot():
+def main():
     """Extracts the necessary emission line spectra and plots them to replicate fig. 2
     of CLASSY VIII"""
 
-    filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\BPT diagrams\Final_CLASSY_EMISSION_LINES_David.xlsx"
+    filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\CLASSY\Final_CLASSY_EMISSION_LINES_David.xlsx"
 
-    o_iii_5007 = pd.read_excel(filepath, usecols = "AV", skiprows = 0).to_numpy().flatten()
-    n_ii_6584 = pd.read_excel(filepath, usecols = "BP", skiprows = 0).to_numpy().flatten()
-    s_ii_6717 = pd.read_excel(filepath, usecols = "BT", skiprows = 0).to_numpy().flatten()
-    s_ii_6731 = pd.read_excel(filepath, usecols = "BX", skiprows = 0).to_numpy().flatten()
-    o_i_6300 = pd.read_excel(filepath, usecols = "BD", skiprows = 0).to_numpy().flatten()
-    h_b = pd.read_excel(filepath, usecols = "AN", skiprows = 0).to_numpy().flatten()
-    h_a = pd.read_excel(filepath, usecols = "BL", skiprows = 0).to_numpy().flatten()
+    o_iii_5007 = pd.read_excel(filepath, usecols = "AV", skiprows = 0).to_numpy().flatten()[0:45]
+    n_ii_6584 = pd.read_excel(filepath, usecols = "BP", skiprows = 0).to_numpy().flatten()[0:45]
+    s_ii_6717 = pd.read_excel(filepath, usecols = "BT", skiprows = 0).to_numpy().flatten()[0:45]
+    s_ii_6731 = pd.read_excel(filepath, usecols = "BX", skiprows = 0).to_numpy().flatten()[0:45]
+    o_i_6300 = pd.read_excel(filepath, usecols = "BD", skiprows = 0).to_numpy().flatten()[0:45]
+    h_b = pd.read_excel(filepath, usecols = "AN", skiprows = 0).to_numpy().flatten()[0:45]
+    h_a = pd.read_excel(filepath, usecols = "BL", skiprows = 0).to_numpy().flatten()[0:45]
 
     #errors
 
-    o_iii_5007_err_up = pd.read_excel(filepath, usecols = "AW", skiprows = 0).to_numpy().flatten()
-    n_ii_6584_err_up = pd.read_excel(filepath, usecols = "BQ", skiprows = 0).to_numpy().flatten()
-    s_ii_6717_err_up = pd.read_excel(filepath, usecols = "BU", skiprows = 0).to_numpy().flatten()
-    s_ii_6731_err_up = pd.read_excel(filepath, usecols = "BY", skiprows = 0).to_numpy().flatten()
-    o_i_6300_err_up = pd.read_excel(filepath, usecols = "BE", skiprows = 0).to_numpy().flatten()
-    h_b_err_up = pd.read_excel(filepath, usecols = "AO", skiprows = 0).to_numpy().flatten()
-    h_a_err_up = pd.read_excel(filepath, usecols = "BM", skiprows = 0).to_numpy().flatten()
+    o_iii_5007_err_up = pd.read_excel(filepath, usecols = "AW", skiprows = 0).to_numpy().flatten()[0:45]
+    n_ii_6584_err_up = pd.read_excel(filepath, usecols = "BQ", skiprows = 0).to_numpy().flatten()[0:45]
+    s_ii_6717_err_up = pd.read_excel(filepath, usecols = "BU", skiprows = 0).to_numpy().flatten()[0:45]
+    s_ii_6731_err_up = pd.read_excel(filepath, usecols = "BY", skiprows = 0).to_numpy().flatten()[0:45]
+    o_i_6300_err_up = pd.read_excel(filepath, usecols = "BE", skiprows = 0).to_numpy().flatten()[0:45]
+    h_b_err_up = pd.read_excel(filepath, usecols = "AO", skiprows = 0).to_numpy().flatten()[0:45][0:45]
+    h_a_err_up = pd.read_excel(filepath, usecols = "BM", skiprows = 0).to_numpy().flatten()[0:45][0:45]
     
-    o_iii_5007_err_down = pd.read_excel(filepath, usecols = "AX", skiprows = 0).to_numpy().flatten()
-    n_ii_6584_err_down = pd.read_excel(filepath, usecols = "BR", skiprows = 0).to_numpy().flatten()
-    s_ii_6717_err_down = pd.read_excel(filepath, usecols = "BV", skiprows = 0).to_numpy().flatten()
-    s_ii_6731_err_down = pd.read_excel(filepath, usecols = "BZ", skiprows = 0).to_numpy().flatten()
-    o_i_6300_err_down = pd.read_excel(filepath, usecols = "BF", skiprows = 0).to_numpy().flatten()
-    h_b_err_down = pd.read_excel(filepath, usecols = "AP", skiprows = 0).to_numpy().flatten()
-    h_a_err_down = pd.read_excel(filepath, usecols = "BN", skiprows = 0).to_numpy().flatten()
+    o_iii_5007_err_down = pd.read_excel(filepath, usecols = "AX", skiprows = 0).to_numpy().flatten()[0:45]
+    n_ii_6584_err_down = pd.read_excel(filepath, usecols = "BR", skiprows = 0).to_numpy().flatten()[0:45]
+    s_ii_6717_err_down = pd.read_excel(filepath, usecols = "BV", skiprows = 0).to_numpy().flatten()[0:45]
+    s_ii_6731_err_down = pd.read_excel(filepath, usecols = "BZ", skiprows = 0).to_numpy().flatten()[0:45]
+    o_i_6300_err_down = pd.read_excel(filepath, usecols = "BF", skiprows = 0).to_numpy().flatten()[0:45]
+    h_b_err_down = pd.read_excel(filepath, usecols = "AP", skiprows = 0).to_numpy().flatten()[0:45]
+    h_a_err_down = pd.read_excel(filepath, usecols = "BN", skiprows = 0).to_numpy().flatten()[0:45]
 
     #average errors
 
@@ -135,9 +135,12 @@ def extract_and_plot():
     plt.savefig("BPT_OI.png")
     plt.show()
 
-def main():
-    extract_and_plot()
-    
- 
-main()
+    #Extract data to csv files
+    data = np.column_stack((nii_ha, nii_ha_err, sii_ha, sii_ha_err, oi_ha, oi_ha_err, oiii_hb, oiii_hb_err))
+    np.savetxt("CLASSYBPTdata.csv", data, delimiter=",", header = "NII, NII_err, SII, SII_err, OI, OI_err, OIII, OIII_err")
+
+if __name__ == "__main__":
+    main()
+
+
 

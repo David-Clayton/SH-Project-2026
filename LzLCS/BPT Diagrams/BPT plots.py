@@ -139,6 +139,10 @@ def main():
     plt.legend()
     plt.savefig("BPT_OI.png")
     plt.show()
+
+    #Extract data to csv files
+    data = np.column_stack((nii_ha, nii_ha_err, sii_ha, sii_ha_err, oi_ha, oi_ha_err, oiii_hb, oiii_hb_err))
+    np.savetxt("LzLCSBPTdata.csv", data, delimiter=",", header = "NII, NII_err, SII, SII_err, OI, OI_err, OIII, OIII_err")
     
 main()
 
