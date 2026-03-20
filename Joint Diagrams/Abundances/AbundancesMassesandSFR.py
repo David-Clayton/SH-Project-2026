@@ -91,6 +91,8 @@ def main():
 
     background_abund_filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Joint Diagrams\Abundances\Sample_NO_abundances_Literature.xlsx"
 
+    high_z_filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Joint Diagrams\Abundances\David_highz-sample.xlsx"
+
     classy_metal = pd.read_csv(classy_abund_filepath, delimiter=",", usecols = [0], header = 0).to_numpy().flatten()[0:45]
     classy_metal_err_u = pd.read_csv(classy_abund_err_filepath, delimiter=",", usecols = [0], header=0).to_numpy().flatten()
     classy_metal_err_d = pd.read_csv(classy_abund_err_filepath, delimiter=",", usecols = [1], header=0).to_numpy().flatten()
@@ -121,6 +123,17 @@ def main():
     background_n_o = pd.read_excel(background_abund_filepath, usecols = "D", skiprows = 0).to_numpy().flatten()
     background_n_o_err = pd.read_excel(background_abund_filepath, usecols = "E", skiprows = 0).to_numpy().flatten()
 
+    high_z_mass = pd.read_excel(high_z_filepath, usecols = "C", skiprows = 0).to_numpy().flatten()
+    high_z_mass_err_up = pd.read_excel(high_z_filepath, usecols = "D", skiprows = 0).to_numpy().flatten()
+    high_z_mass_err_down = pd.read_excel(high_z_filepath, usecols = "E", skiprows = 0).to_numpy().flatten()
+    high_z_mass_err = (high_z_mass_err_down + high_z_mass_err_up) / 2
+    high_z_sfr = pd.read_excel(high_z_filepath, usecols = "F", skiprows = 0).to_numpy().flatten()
+    high_z_sfr_err = pd.read_excel(high_z_filepath, usecols = "G", skiprows = 0).to_numpy().flatten()
+    high_z_metal = pd.read_excel(high_z_filepath, usecols = "H", skiprows = 0).to_numpy().flatten()
+    high_z_metal_err = pd.read_excel(high_z_filepath, usecols = "I", skiprows = 0).to_numpy().flatten()
+    high_z_n_o = pd.read_excel(high_z_filepath, usecols = "J", skiprows = 0).to_numpy().flatten()
+    high_z_n_o_err = pd.read_excel(high_z_filepath, usecols = "K", skiprows = 0).to_numpy().flatten()
+                       
     classy_metal_err = (classy_metal_err_d + classy_metal_err_u) / 2
     classy_n_o_err = (classy_n_o_err_d + classy_n_o_err_u) / 2
     lzlcs_metal_err = (lzlcs_metal_err_d + lzlcs_metal_err_u) / 2
@@ -138,6 +151,9 @@ def main():
     plt.scatter(lzlcs_metal, lzlcs_n_o, s=20, color="salmon", label="LzLCS")
     plt.errorbar(lzlcs_metal, lzlcs_n_o, xerr=lzlcs_metal_err, yerr=lzlcs_n_o_err,
              fmt='none', ecolor="salmon")
+    plt.scatter(high_z_metal, high_z_n_o, s=20, color = "goldenrod", label = "High-z")
+    plt.errorbar(high_z_metal, high_z_n_o, xerr=high_z_metal_err, yerr = high_z_n_o_err, 
+                 fmt = "none", color = "goldenrod")
     plt.plot(xnicholls, ynicholls, color = "darkgreen", label = "Nicholls 2017")
     plt.xlabel(r"$12 + log_{10}(O/H)$", fontsize = 12)
     plt.ylabel(r"$log_{10}(N/O)$", fontsize = 12)
