@@ -2,6 +2,7 @@ import pandas as pd
 import pyneb as pn
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit as fit
 
 def nicholls2017(metallicity):
     """Relation to fit log(N/O) with 12+log(O/H)"""
@@ -27,16 +28,6 @@ def classyxii2025(sfr):
     """Relation to fit log(N/O) with SFR for SFR>1, constant for SFR<1"""
     return 0.67*sfr - 1.91
 
-def andrewsmartini2013(stellar_mass):
-    """Relation to fit 12 + log(O/H) with M*"""
-    asm = 8.798
-    m_to = 8.901
-    gamma = 0.64
-    
-    metallicity = asm - np.log10(1 + (10 ** (m_to - stellar_mass))**gamma)
-
-    return metallicity
-
 def classyi(mass):
     """Relation to fit SFR with M*"""
     return 0.91*mass - 7.25
@@ -44,6 +35,23 @@ def classyi(mass):
 def classyimassmetal(mass):
     """Relation to fit metallicity with M* from CLASSY sample"""
     return 0.2*mass + 6.4
+
+def clarke2024(mass):
+    """M* - SFR relation for 1.4 < z < 7"""
+    m = 0.69
+    b = 0.56
+    SFR = m * (mass - 9.16) + b
+
+    return SFR
+
+def nakajima2023(mass):
+    """High-z MZR for 4<z<10"""
+    Z_10 = 8.24
+    gamma = 0.25
+
+    metallicity = Z_10 + gamma*(mass - 10)
+
+    return metallicity
 
 def curti2020b(mass, sfr):
     """Fundamental Metallicity Relation between M*, Z, and SFR"""
@@ -61,22 +69,28 @@ def curti2020b(mass, sfr):
 
     return Z
 
-def nakajima2023(mass):
-    """High-z MZR for 4<z<10"""
-    Z_10 = 8.24
-    gamma = 0.25
+def stantonz2_4(mass):
+    """MZR for 2<z<4 from Stanton 26"""
+    z = 0.29*mass + 8.14
+    return z
 
-    metallicity = Z_10 + gamma*(mass - 10)
+def stantonz4_8(mass):
+    """MZR for 4<z<8 from Stanton 26"""
+    z = 0.30*mass + 8.00
+    return z
 
-    return metallicity
+def fit_fcn(x, a, b):
+    return a*x + b
 
-def clarke2024(mass):
-    """M* - SFR relation for 1.4 < z < 7"""
-    m = 0.69
-    b = 0.56
-    SFR = m * (mass - 9.16) + b
+def curvefit(x, y, sigma):
+    """Fit linear relations to LzLCS data that uses Berg 2022"""
+    mask = np.isfinite(x) & np.isfinite(y) & np.isfinite(sigma) & (sigma >= 0)
 
-    return SFR
+    popt, pcov = fit(fit_fcn, xdata=x[mask], ydata=y[mask], sigma=sigma[mask], absolute_sigma=True)
+    a, b = popt
+    a_err, b_err = np.sqrt(np.diag(pcov))
+
+    return a, a_err, b, b_err
 
 def main():
 
@@ -145,16 +159,16 @@ def main():
     ynicholls = nicholls2017(xnicholls)
 
     plt.scatter(background_metal, background_n_o, s = 20, ls = "", color = "silver")
-    plt.scatter(classy_metal, classy_n_o, s=20, color="slateblue", label="CLASSY")
+    plt.scatter(classy_metal, classy_n_o, s=20, color="slateblue", label="CLASSY (z~0)")
     plt.errorbar(classy_metal, classy_n_o, xerr=classy_metal_err, yerr=classy_n_o_err,
              fmt='none', ecolor="slateblue")
-    plt.scatter(lzlcs_metal, lzlcs_n_o, s=20, color="salmon", label="LzLCS")
+    plt.scatter(lzlcs_metal, lzlcs_n_o, s=20, color="salmon", label="LzLCS(z~0)")
     plt.errorbar(lzlcs_metal, lzlcs_n_o, xerr=lzlcs_metal_err, yerr=lzlcs_n_o_err,
              fmt='none', ecolor="salmon")
-    plt.scatter(high_z_metal, high_z_n_o, s=20, color = "goldenrod", label = "High-z")
+    plt.scatter(high_z_metal, high_z_n_o, s=20, color = "goldenrod", label = "z>6")
     plt.errorbar(high_z_metal, high_z_n_o, xerr=high_z_metal_err, yerr = high_z_n_o_err, 
                  fmt = "none", color = "goldenrod")
-    plt.plot(xnicholls, ynicholls, color = "darkgreen", label = "Nicholls 2017")
+    plt.plot(xnicholls, ynicholls, color = "darkgreen", label = "Nicholls+2017")
     plt.xlabel(r"$12 + log_{10}(O/H)$", fontsize = 12)
     plt.ylabel(r"$log_{10}(N/O)$", fontsize = 12)
     plt.xlim(6.9, 9)
@@ -168,17 +182,28 @@ def main():
 
     mass = np.linspace(5.5, 10.5, 1000)
     mass_nakajima = np.linspace(7.5, 9.5, 1000)
-    mass_berg = classyimassmetal(mass)
-    mass_andrews = andrewsmartini2013(mass)
-    mass_high_z = nakajima2023(mass_nakajima)
+    mass_stanton = np.linspace(8.0, 10.3, 1000)
+    z_berg = classyimassmetal(mass)
+    z_nakajima = nakajima2023(mass_nakajima)
+    z_stanton24 = stantonz2_4(mass_stanton)
+    z_stanton48 = stantonz4_8(mass_stanton)
 
-    plt.scatter(classy_mass, classy_metal, s = 20, ls = "", color = "slateblue", label = "CLASSY")
+    #LzLCS linear fit
+    a, a_err, b, b_err = curvefit(lzlcs_mass, lzlcs_metal, lzlcs_metal_err)
+    z_lzlcs = fit_fcn(mass, a, b)
+
+    plt.scatter(classy_mass, classy_metal, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_mass, classy_metal, yerr = classy_metal_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_mass, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS")
+    plt.scatter(lzlcs_mass, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
     plt.errorbar(lzlcs_mass, lzlcs_metal, xerr = lzlcs_mass_err, yerr = lzlcs_metal_err, fmt = "none", ecolor = "salmon")
-    plt.plot(mass, mass_berg, color = "darkgreen", label = "Berg 2022 (z~0)")
-    plt.plot(mass, mass_andrews, color = "brown", label = "A & M 2013 (z~0)")
-    plt.plot(mass_nakajima, mass_high_z, color = "purple", label = "Nakajimi 2023 (z=4-10)")
+    plt.scatter(high_z_mass, high_z_metal, s=20, color = "goldenrod", label = "z>6")
+    plt.errorbar(high_z_mass, high_z_metal, xerr=high_z_mass_err, yerr = high_z_metal_err, 
+                 fmt = "none", color = "goldenrod")
+    plt.plot(mass, z_berg, color = "darkgreen", label = "Berg+2022 (z~0)")
+    plt.plot(mass_nakajima, z_nakajima, color = "purple", label = "Nakajima+2023 (4<z<10)")
+    #plt.plot(mass_stanton, z_stanton24, color = "teal", label = "Stanton+2026 (2<z<4)")
+    #plt.plot(mass_stanton, z_stanton48, color = "grey", label = "Stanton+2026 (4<z<8)")
+    plt.plot(mass, z_lzlcs, color = "olive", label = "This work (z~0)")
     plt.xlim(5.5, 10.5)
     plt.ylim(6.9, 9.5)
     plt.xlabel(r"$log_{10}$ of total stellar mass in galaxy ($M_{\odot}$)", fontsize = 12)
@@ -188,29 +213,35 @@ def main():
     plt.savefig("MZR.png")
     plt.show()
 
+    print(f"The M-Z fit for LzLCS returned a gradient of {a} +-{a_err} and an intercept of {b}+-{b_err}")
+
     #Metallicity vs SFR
 
-    xcurti = np.linspace(-3, 3, 1000)
-    ycurti6 = curti2020b(6, xcurti)
-    ycurti7 = curti2020b(7, xcurti)
-    ycurti8 = curti2020b(8, xcurti)
-    ycurti9 = curti2020b(9, xcurti)
-    ycurti10 = curti2020b(10, xcurti)
+    #xcurti = np.linspace(-3, 3, 1000)
+    #ycurti6 = curti2020b(6, xcurti)
+    #ycurti7 = curti2020b(7, xcurti)
+    #ycurti8 = curti2020b(8, xcurti)
+    #ycurti9 = curti2020b(9, xcurti)
+    #ycurti10 = curti2020b(10, xcurti)
 
-    plt.scatter(classy_sfr, classy_metal, s = 20, ls = "", color = "slateblue", label = "CLASSY")
+    plt.scatter(classy_sfr, classy_metal, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_sfr, classy_metal, yerr = classy_metal_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_sfr, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS")
+    plt.scatter(lzlcs_sfr, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
     plt.errorbar(lzlcs_sfr, lzlcs_metal, xerr = lzlcs_sfr_err, yerr = lzlcs_metal_err, fmt = "none", ecolor = "salmon")
-    plt.plot(xcurti, ycurti6, color = "springgreen", label = r"Curti 2020 $\log_{10}M* = 6$")
-    plt.plot(xcurti, ycurti7, color = "limegreen", label = r"Curti 2020 $\log_{10}M* = 7$")
-    plt.plot(xcurti, ycurti8, color = "seagreen", label = r"Curti 2020 $\log_{10}M* = 8$")
-    plt.plot(xcurti, ycurti9, color = "forestgreen", label = r"Curti 2020 $\log_{10}M* = 9$")
-    plt.plot(xcurti, ycurti10, color = "darkgreen", label = r"Curti 2020 $\log_{10}M* = 10$")
+    plt.scatter(high_z_sfr, high_z_metal, s=20, color = "goldenrod", label = "z>6")
+    plt.errorbar(high_z_sfr, high_z_metal, xerr=high_z_sfr_err, yerr = high_z_metal_err, 
+                 fmt = "none", color = "goldenrod")
+    #plt.plot(xcurti, ycurti6, color = "springgreen", label = r"Curti 2020 $\log_{10}M* = 6$")
+    #plt.plot(xcurti, ycurti7, color = "limegreen", label = r"Curti 2020 $\log_{10}M* = 7$")
+    #plt.plot(xcurti, ycurti8, color = "seagreen", label = r"Curti 2020 $\log_{10}M* = 8$")
+    #plt.plot(xcurti, ycurti9, color = "forestgreen", label = r"Curti 2020 $\log_{10}M* = 9$")
+    #plt.plot(xcurti, ycurti10, color = "darkgreen", label = r"Curti 2020 $\log_{10}M* = 10$")
     plt.xlim(-3, 3)
     plt.ylim(6.9, 9.5)
     plt.xlabel(r"$log_{10}$ of star-formation rate in galaxy ($M_{\odot} yr^{-1}$)", fontsize = 12)
     plt.ylabel(r"$12 + log_{10}(O/H)$", fontsize = 12)
-    plt.legend(loc = "upper left", ncols = 2, fontsize = 8)
+    #plt.legend(loc = "upper left", ncols = 2, fontsize = 8)
+    plt.legend()
     plt.tight_layout()
     plt.savefig("SFRMetallicity.png")
     plt.show()
@@ -220,11 +251,14 @@ def main():
     xhaydenpawson = np.linspace(5, 11, 100)
     yhaydenpawson = haydenpawson2022(xhaydenpawson)
 
-    plt.scatter(classy_mass, classy_n_o, s = 20, ls = "", color = "slateblue", label = "CLASSY")
+    plt.scatter(classy_mass, classy_n_o, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_mass, classy_n_o, yerr = classy_metal_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_mass, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS")
+    plt.scatter(lzlcs_mass, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
     plt.errorbar(lzlcs_mass, lzlcs_n_o, xerr = lzlcs_mass_err, yerr = lzlcs_n_o_err, fmt = "none", ecolor = "salmon")
-    plt.plot(xhaydenpawson, yhaydenpawson, color = "darkgreen", label = "Hayden-Pawson 2022 (z~0)")
+    plt.scatter(high_z_mass, high_z_n_o, s=20, color = "goldenrod", label = "z>6")
+    plt.errorbar(high_z_mass, high_z_n_o, xerr=high_z_mass_err, yerr = high_z_n_o_err, 
+                 fmt = "none", color = "goldenrod")
+    plt.plot(xhaydenpawson, yhaydenpawson, color = "darkgreen", label = "Hayden-Pawson+2022 (z~0)")
     plt.xlim(5,11)
     plt.ylim(-2.2, -0.5)
     plt.xlabel(r"$log_{10}$ of total stellar mass in galaxy ($M_{\odot}$)", fontsize = 12)
@@ -241,11 +275,14 @@ def main():
     classyxii_low = np.full(1000, -1.38)
     classyxii_high = classyxii2025(high_sfr)
 
-    plt.scatter(classy_sfr, classy_n_o, s = 20, ls = "", color = "slateblue", label = "CLASSY")
+    plt.scatter(classy_sfr, classy_n_o, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_sfr, classy_n_o, yerr = classy_n_o_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_sfr, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS")
+    plt.scatter(lzlcs_sfr, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
     plt.errorbar(lzlcs_sfr, lzlcs_n_o, xerr = lzlcs_sfr_err, yerr = lzlcs_n_o_err, fmt = "none", ecolor = "salmon")
-    plt.plot(low_sfr, classyxii_low, color = "darkgreen", label = "A-C 2025 (z~0)")
+    plt.scatter(high_z_sfr, high_z_n_o, s=20, color = "goldenrod", label = "z>6")
+    plt.errorbar(high_z_sfr, high_z_n_o, xerr=high_z_sfr_err, yerr = high_z_n_o_err, 
+                 fmt = "none", color = "goldenrod")
+    plt.plot(low_sfr, classyxii_low, color = "darkgreen", label = "A-C+2025 (z~0)")
     plt.plot(high_sfr, classyxii_high, color = "darkgreen")
     plt.xlim(-3,3)
     plt.ylim(-2.2, -0.5)
@@ -259,15 +296,21 @@ def main():
     #M vs SFR
 
     xmass = np.linspace(5, 11, 1000)
-    ymassberg = classyi(xmass)
-    ymassclarke = clarke2024(xmass)
+    sfrberg = classyi(xmass)
+    sfrclarke = clarke2024(xmass)
+    a, a_err, b, b_err = curvefit(lzlcs_mass, lzlcs_sfr, lzlcs_sfr_err)
+    sfrlzlcs = fit_fcn(mass, a, b)
 
-    plt.scatter(classy_mass, classy_sfr, s = 20, ls = "", color = "slateblue", label = "CLASSY")
+    plt.scatter(classy_mass, classy_sfr, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_mass, classy_sfr, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_mass, lzlcs_sfr, s = 20, ls = "", color = "salmon", label = "LzLCS")
+    plt.scatter(lzlcs_mass, lzlcs_sfr, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
     plt.errorbar(lzlcs_mass, lzlcs_sfr, xerr = lzlcs_mass_err, yerr = lzlcs_sfr_err, fmt = "none", ecolor = "salmon")
-    plt.plot(xmass, ymassberg, color = "darkgreen", label = "Berg 2022 (z~0)")
-    plt.plot(xmass, ymassclarke, color = "lightgreen", label = "Clarke 2024 (1.4<z<7)")
+    plt.scatter(high_z_mass, high_z_sfr, s=20, color = "goldenrod", label = "z>6")
+    plt.errorbar(high_z_mass, high_z_sfr, xerr=high_z_mass_err, yerr = high_z_sfr_err, 
+                 fmt = "none", color = "goldenrod")
+    plt.plot(xmass, sfrberg, color = "darkgreen", label = "Berg+2022 (z~0)")
+    plt.plot(xmass, sfrclarke, color = "lightgreen", label = "Clarke+2024 (1.4<z<7)")
+    plt.plot(xmass, sfrlzlcs, color = "olive", label = "This work (z~0)")
     plt.xlim(5,11)
     plt.ylim(-3, 3)
     plt.xlabel(r"$log_{10}$ of total stellar mass in galaxy ($M_{\odot}$)", fontsize = 12)
@@ -276,6 +319,8 @@ def main():
     plt.tight_layout()
     plt.savefig("SFRM.png")
     plt.show()
+
+    print(f"The gradient of the M-SFR relation fit for LzLCS is {a}+-{a_err} and the intercept is {b}+-{b_err}")
 
 
 

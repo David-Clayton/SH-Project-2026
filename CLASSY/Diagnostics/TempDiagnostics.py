@@ -85,16 +85,16 @@ def extract_and_plot():
       print(len(Tii_down[emission_line_mask]))
 
       #Data points that come from the emission lines
-      plt.errorbar(o_iii_T_e[emission_line_mask], o_ii_T_e[emission_line_mask], yerr = [Tii_down[emission_line_mask], Tii_up[emission_line_mask]], xerr= [Tiii_down[emission_line_mask], Tiii_up[emission_line_mask]],  ls = "", marker = "x", color = "r", label = "Emission lines")
+      plt.errorbar(o_iii_T_e[emission_line_mask], o_ii_T_e[emission_line_mask], yerr = [Tii_down[emission_line_mask], Tii_up[emission_line_mask]], xerr= [Tiii_down[emission_line_mask], Tiii_up[emission_line_mask]],  ls = "", marker = "x", color = "r")
       #Data points that come from Garnett's formula
       #plt.errorbar(o_iii_T_e_exp[garnett_mask_1], o_ii_T_e_exp[garnett_mask_1], yerr = [Tii_down[garnett_mask_1], Tii_up[garnett_mask_1]], xerr= [Tiii_down[garnett_mask_1], Tiii_up[garnett_mask_1]], ls = "", marker = "x", color = "g", label = "Garnett")
       #plt.errorbar(o_iii_T_e_exp[garnett_mask_2], o_ii_T_e_exp[garnett_mask_2], yerr = [Tii_down[garnett_mask_2], Tii_up[garnett_mask_2]], xerr= [Tiii_down[garnett_mask_2], Tiii_up[garnett_mask_2]], ls = "", marker = "x", color = "g")
-      plt.axline(xy1 = (0, 3000), slope = 0.7, color = "b" , label = "Garnett 1992 \n T_e[OII] = 0.7T_e[OIII] + 3000K" )
+      plt.axline(xy1 = (0, 3000), slope = 0.7, color = "b" , label = "Garnett +92")
       plt.xlim(6000, 20000)
       plt.ylim(6000, 20000)
-      plt.xlabel("T_e[OIII] (K)")
-      plt.ylabel("T_e[OII] (K)")
-      plt.title("T_e[OIII]_vs_T_e[OII] Using data from \n emission lines")
+      plt.xlabel(r"$T_e[OIII]$ (K)")
+      plt.ylabel(r"$T_e[OII]$ (K)")
+      plt.title(r"CLASSY galaxies $T_e$ derivation")
       plt.legend()
       plt.savefig("Tempswoformula")
       plt.show()
