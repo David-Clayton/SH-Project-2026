@@ -158,16 +158,16 @@ def main():
     xnicholls = np.linspace(6.9, 9.0, 1000)
     ynicholls = nicholls2017(xnicholls)
 
+    plt.scatter(high_z_metal, high_z_n_o, s=20, color = "goldenrod", alpha = 0.3, label = "z>6")
+    plt.errorbar(high_z_metal, high_z_n_o, xerr=high_z_metal_err, yerr = high_z_n_o_err, 
+                 fmt = "none", color = "goldenrod", alpha = 0.3)
     plt.scatter(background_metal, background_n_o, s = 20, ls = "", color = "silver")
     plt.scatter(classy_metal, classy_n_o, s=20, color="slateblue", label="CLASSY (z~0)")
     plt.errorbar(classy_metal, classy_n_o, xerr=classy_metal_err, yerr=classy_n_o_err,
              fmt='none', ecolor="slateblue")
-    plt.scatter(lzlcs_metal, lzlcs_n_o, s=20, color="salmon", label="LzLCS(z~0)")
+    plt.scatter(lzlcs_metal, lzlcs_n_o, s=20, color="salmon", label="LzLCS(z~0.3)")
     plt.errorbar(lzlcs_metal, lzlcs_n_o, xerr=lzlcs_metal_err, yerr=lzlcs_n_o_err,
              fmt='none', ecolor="salmon")
-    plt.scatter(high_z_metal, high_z_n_o, s=20, color = "goldenrod", label = "z>6")
-    plt.errorbar(high_z_metal, high_z_n_o, xerr=high_z_metal_err, yerr = high_z_n_o_err, 
-                 fmt = "none", color = "goldenrod")
     plt.plot(xnicholls, ynicholls, color = "darkgreen", label = "Nicholls+2017")
     plt.xlabel(r"$12 + log_{10}(O/H)$", fontsize = 12)
     plt.ylabel(r"$log_{10}(N/O)$", fontsize = 12)
@@ -192,19 +192,19 @@ def main():
     a, a_err, b, b_err = curvefit(lzlcs_mass, lzlcs_metal, lzlcs_metal_err)
     z_lzlcs = fit_fcn(mass, a, b)
 
+    plt.scatter(high_z_mass, high_z_metal, s=20, color = "goldenrod", alpha = 0.3, label = "z>3")
+    plt.errorbar(high_z_mass, high_z_metal, xerr=high_z_mass_err, yerr = high_z_metal_err, 
+                 fmt = "none", color = "goldenrod", alpha = 0.3)
     plt.scatter(classy_mass, classy_metal, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_mass, classy_metal, yerr = classy_metal_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_mass, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
+    plt.scatter(lzlcs_mass, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0.3)")
     plt.errorbar(lzlcs_mass, lzlcs_metal, xerr = lzlcs_mass_err, yerr = lzlcs_metal_err, fmt = "none", ecolor = "salmon")
-    plt.scatter(high_z_mass, high_z_metal, s=20, color = "goldenrod", label = "z>6")
-    plt.errorbar(high_z_mass, high_z_metal, xerr=high_z_mass_err, yerr = high_z_metal_err, 
-                 fmt = "none", color = "goldenrod")
     plt.plot(mass, z_berg, color = "darkgreen", label = "Berg+2022 (z~0)")
     plt.plot(mass_nakajima, z_nakajima, color = "purple", label = "Nakajima+2023 (4<z<10)")
     #plt.plot(mass_stanton, z_stanton24, color = "teal", label = "Stanton+2026 (2<z<4)")
     #plt.plot(mass_stanton, z_stanton48, color = "grey", label = "Stanton+2026 (4<z<8)")
     plt.plot(mass, z_lzlcs, color = "olive", label = "This work (z~0)")
-    plt.xlim(5.5, 10.5)
+    plt.xlim(5.5, 11)
     plt.ylim(6.9, 9.5)
     plt.xlabel(r"$log_{10}$ of total stellar mass in galaxy ($M_{\odot}$)", fontsize = 12)
     plt.ylabel(r"$12 + log_{10}(O/H)$", fontsize = 12)
@@ -223,14 +223,14 @@ def main():
     #ycurti8 = curti2020b(8, xcurti)
     #ycurti9 = curti2020b(9, xcurti)
     #ycurti10 = curti2020b(10, xcurti)
-
+    plt.scatter(high_z_sfr, high_z_metal, s=20, color = "goldenrod", alpha = 0.3, label = "z>3")
+    plt.errorbar(high_z_sfr, high_z_metal, xerr=high_z_sfr_err, yerr = high_z_metal_err, 
+                 fmt = "none", color = "goldenrod", alpha = 0.3)
     plt.scatter(classy_sfr, classy_metal, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_sfr, classy_metal, yerr = classy_metal_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_sfr, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
+    plt.scatter(lzlcs_sfr, lzlcs_metal, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0.3)")
     plt.errorbar(lzlcs_sfr, lzlcs_metal, xerr = lzlcs_sfr_err, yerr = lzlcs_metal_err, fmt = "none", ecolor = "salmon")
-    plt.scatter(high_z_sfr, high_z_metal, s=20, color = "goldenrod", label = "z>6")
-    plt.errorbar(high_z_sfr, high_z_metal, xerr=high_z_sfr_err, yerr = high_z_metal_err, 
-                 fmt = "none", color = "goldenrod")
+    
     #plt.plot(xcurti, ycurti6, color = "springgreen", label = r"Curti 2020 $\log_{10}M* = 6$")
     #plt.plot(xcurti, ycurti7, color = "limegreen", label = r"Curti 2020 $\log_{10}M* = 7$")
     #plt.plot(xcurti, ycurti8, color = "seagreen", label = r"Curti 2020 $\log_{10}M* = 8$")
@@ -251,16 +251,16 @@ def main():
     xhaydenpawson = np.linspace(5, 11, 100)
     yhaydenpawson = haydenpawson2022(xhaydenpawson)
 
+    plt.scatter(high_z_mass, high_z_n_o, s=20, color = "goldenrod", alpha = 0.3, label = "z>6")
+    plt.errorbar(high_z_mass, high_z_n_o, xerr=high_z_mass_err, yerr = high_z_n_o_err, 
+                 fmt = "none", color = "goldenrod", alpha = 0.3)
     plt.scatter(classy_mass, classy_n_o, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_mass, classy_n_o, yerr = classy_metal_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_mass, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
+    plt.scatter(lzlcs_mass, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0.3)")
     plt.errorbar(lzlcs_mass, lzlcs_n_o, xerr = lzlcs_mass_err, yerr = lzlcs_n_o_err, fmt = "none", ecolor = "salmon")
-    plt.scatter(high_z_mass, high_z_n_o, s=20, color = "goldenrod", label = "z>6")
-    plt.errorbar(high_z_mass, high_z_n_o, xerr=high_z_mass_err, yerr = high_z_n_o_err, 
-                 fmt = "none", color = "goldenrod")
     plt.plot(xhaydenpawson, yhaydenpawson, color = "darkgreen", label = "Hayden-Pawson+2022 (z~0)")
     plt.xlim(5,11)
-    plt.ylim(-2.2, -0.5)
+    #plt.ylim(-2.2, -0.5)
     plt.xlabel(r"$log_{10}$ of total stellar mass in galaxy ($M_{\odot}$)", fontsize = 12)
     plt.ylabel(r"$log_{10}(N/O)$", fontsize = 12)
     plt.legend()
@@ -275,17 +275,17 @@ def main():
     classyxii_low = np.full(1000, -1.38)
     classyxii_high = classyxii2025(high_sfr)
 
+    plt.scatter(high_z_sfr, high_z_n_o, s=20, color = "goldenrod", alpha = 0.3, label = "z>6")
+    plt.errorbar(high_z_sfr, high_z_n_o, xerr=high_z_sfr_err, yerr = high_z_n_o_err, 
+                 fmt = "none", color = "goldenrod", alpha = 0.3)
     plt.scatter(classy_sfr, classy_n_o, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_sfr, classy_n_o, yerr = classy_n_o_err, fmt = "none", ecolor = "slateblue")
-    plt.scatter(lzlcs_sfr, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
+    plt.scatter(lzlcs_sfr, lzlcs_n_o, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0.3)")
     plt.errorbar(lzlcs_sfr, lzlcs_n_o, xerr = lzlcs_sfr_err, yerr = lzlcs_n_o_err, fmt = "none", ecolor = "salmon")
-    plt.scatter(high_z_sfr, high_z_n_o, s=20, color = "goldenrod", label = "z>6")
-    plt.errorbar(high_z_sfr, high_z_n_o, xerr=high_z_sfr_err, yerr = high_z_n_o_err, 
-                 fmt = "none", color = "goldenrod")
     plt.plot(low_sfr, classyxii_low, color = "darkgreen", label = "A-C+2025 (z~0)")
     plt.plot(high_sfr, classyxii_high, color = "darkgreen")
     plt.xlim(-3,3)
-    plt.ylim(-2.2, -0.5)
+    #plt.ylim(-2.2, -0.5)
     plt.xlabel(r"$log_{10}$ of star-formation rate in galaxy ($M_{\odot} yr^{-1}$)", fontsize = 12)
     plt.ylabel(r"$log_{10}(N/O)$", fontsize = 12)
     plt.legend()
@@ -301,13 +301,13 @@ def main():
     a, a_err, b, b_err = curvefit(lzlcs_mass, lzlcs_sfr, lzlcs_sfr_err)
     sfrlzlcs = fit_fcn(mass, a, b)
 
+    plt.scatter(high_z_mass, high_z_sfr, s=20, color = "goldenrod", alpha = 0.3, label = "z>3")
+    plt.errorbar(high_z_mass, high_z_sfr, xerr=high_z_mass_err, yerr = high_z_sfr_err, 
+                 fmt = "none", color = "goldenrod", alpha = 0.3)
     plt.scatter(classy_mass, classy_sfr, s = 20, ls = "", color = "slateblue", label = "CLASSY(z~0)")
     plt.errorbar(classy_mass, classy_sfr, fmt = "none", ecolor = "slateblue")
     plt.scatter(lzlcs_mass, lzlcs_sfr, s = 20, ls = "", color = "salmon", label = "LzLCS(z~0)")
     plt.errorbar(lzlcs_mass, lzlcs_sfr, xerr = lzlcs_mass_err, yerr = lzlcs_sfr_err, fmt = "none", ecolor = "salmon")
-    plt.scatter(high_z_mass, high_z_sfr, s=20, color = "goldenrod", label = "z>6")
-    plt.errorbar(high_z_mass, high_z_sfr, xerr=high_z_mass_err, yerr = high_z_sfr_err, 
-                 fmt = "none", color = "goldenrod")
     plt.plot(xmass, sfrberg, color = "darkgreen", label = "Berg+2022 (z~0)")
     plt.plot(xmass, sfrclarke, color = "lightgreen", label = "Clarke+2024 (1.4<z<7)")
     plt.plot(xmass, sfrlzlcs, color = "olive", label = "This work (z~0)")
