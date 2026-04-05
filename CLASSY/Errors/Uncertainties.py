@@ -96,7 +96,6 @@ def main():
     o_ii_2_err_ab = o_ii_ratio_ab_2  * np.sqrt(((o_ii_7320_err**2 + o_ii_7330_err**2) / (o_ii_7320 + o_ii_7330)**2) + (h_beta_err/h_beta)**2)
     n_ii_err_ab = n_ii_ratio_ab * np.sqrt((n_ii_6584_err/n_ii_6584)**2 + (h_beta_err/h_beta)**2)
 
-
     # Get Gaussian distributions for intensity ratios of each galaxy
     #Takes too long to do it all at once - do it iteratively for each galaxy
 
@@ -212,7 +211,7 @@ def main():
         nii_ab_err_d[i] = nii_ab_err_down
 
         print(f"Galaxy {i+1}/45 has metallicity {12 + np.log10(oiii_ab[i] + oii_ab[i])}")
-        print(f"Galaxty {i+1}/45 has log(N/O) {np.log10(nii_ab[i]/(oii_ab[i] + oiii_ab[i]))}")
+        print(f"Galaxy {i+1}/45 has log(N/O) {np.log10(nii_ab[i]/(oii_ab[i] + oiii_ab[i]))}")
 
     #Propagate errors
     #Oxygen
