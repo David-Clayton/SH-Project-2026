@@ -243,8 +243,11 @@ def CLASSY():
     T_e_s_iii_exp = 0.83 * T_e_o_iii + 1700
     T_e_o_ii_exp = 0.7 * T_e_o_iii + 3000 
 
-    T_e_s_iii = np.where(np.isnan(T_e_s_iii), T_e_s_iii_exp, T_e_s_iii)
-    T_e_o_ii = np.where(np.isnan(T_e_o_ii), T_e_o_ii_exp, T_e_o_ii)
+    #T_e_s_iii = np.where(np.isnan(T_e_s_iii), T_e_s_iii_exp, T_e_s_iii)
+    #T_e_o_ii = np.where(np.isnan(T_e_o_ii), T_e_o_ii_exp, T_e_o_ii)
+
+    T_e_s_iii = T_e_s_iii_exp
+    T_e_o_ii = T_e_o_ii_exp
 
     #Raw abundances (i.e. without errors)
 
