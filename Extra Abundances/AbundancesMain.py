@@ -79,6 +79,8 @@ def CLASSY():
 
     classy_cel_filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Extra Abundances\Final_CLASSY_EMISSION_LINES_David.xlsx"
 
+    names = pd.read_excel(classy_cel_filepath, usecols = "A", skiprows = 0).to_numpy().flatten()[0:45]
+
     h_beta = pd.read_excel(classy_cel_filepath, usecols = "AN", skiprows = 0).to_numpy().flatten()[0:45]
 
     o_ii_3727 = pd.read_excel(classy_cel_filepath, usecols = "B", skiprows = 0).to_numpy().flatten()[0:45]
@@ -242,9 +244,6 @@ def CLASSY():
     #Expand T[OII] and T[SIII] arrays with Garnett relations
     T_e_s_iii_exp = 0.83 * T_e_o_iii + 1700
     T_e_o_ii_exp = 0.7 * T_e_o_iii + 3000 
-
-    #T_e_s_iii = np.where(np.isnan(T_e_s_iii), T_e_s_iii_exp, T_e_s_iii)
-    #T_e_o_ii = np.where(np.isnan(T_e_o_ii), T_e_o_ii_exp, T_e_o_ii)
 
     T_e_s_iii = T_e_s_iii_exp
     T_e_o_ii = T_e_o_ii_exp
@@ -461,8 +460,15 @@ def CLASSY():
     mass = pd.read_csv(classy_phys_cond_filepath, delimiter = ",", usecols = [6], header = 0).to_numpy().flatten()[0:45]
     sfr = pd.read_csv(classy_phys_cond_filepath, delimiter = ",", usecols = [7], header = 0).to_numpy().flatten()[0:45]
 
-    data = np.column_stack((mass, sfr, Z, Z_err_up, Z_err_down, log_S_O, log_S_O_err_up, log_S_O_err_down, log_Ar_O, log_Ar_O_err_up, log_Ar_O_err_down, log_Ne_O, log_Ne_O_err_up, log_Ne_O_err_down, log_Fe_O, log_Fe_O_err_up, log_Fe_O_err_down))
-    np.savetxt("classyextras.csv", data, delimiter = ",", header = "mass, sfr, Z, Z_err_up, Z_err_down, log_S_O, log_S_O_err_up, log_S_O_err_down, log_Ar_O, log_Ar_O_err_up, log_Ar_O_err_down, log_Ne_O, log_Ne_O_err_up, log_Ne_O_err_down, log_Fe_O, log_Fe_O_err_up, log_Fe_O_err_down")
+    data = np.column_stack((names, mass, sfr, T_e_o_iii, T_e_s_iii, T_e_o_ii, Z, Z_err_up, Z_err_down, log_S_O, log_S_O_err_up, log_S_O_err_down, log_Ar_O, log_Ar_O_err_up, log_Ar_O_err_down, log_Ne_O, log_Ne_O_err_up, log_Ne_O_err_down, log_Fe_O, log_Fe_O_err_up, log_Fe_O_err_down))
+    df = pd.DataFrame(data, columns = ["galaxy", "mass", "sfr", "T_e_o_iii", "T_e_s_iii", 
+                                   "T_e_o_ii", "Z", "Z_err_up", "Z_err_down", 
+                                   "log_S_O", "log_S_O_err_up", "log_S_O_err_down", 
+                                   "log_Ar_O", "log_Ar_O_err_up", "log_Ar_O_err_down", 
+                                   "log_Ne_O", "log_Ne_O_err_up", "log_Ne_O_err_down", 
+                                   "log_Fe_O", "log_Fe_O_err_up", "log_Fe_O_err_down"])
+    
+    df.to_csv("classyextras.csv", index=False)
 
 def LzLCS():
 
@@ -478,6 +484,8 @@ def LzLCS():
     #LzLCS emission lines
 
     lzlcs_cel_filepath = r"C:\Users\drcla\OneDrive\Senior Honours Project\Extra Abundances\Final_LYC_EMISSION_LINES_David.xlsx"
+
+    names = pd.read_excel(lzlcs_cel_filepath, usecols = "A", skiprows = 0).to_numpy().flatten()[0:27]
 
     h_beta = pd.read_excel(lzlcs_cel_filepath, usecols = "Z", skiprows = 0).to_numpy().flatten()[0:27]
 
@@ -678,8 +686,14 @@ def LzLCS():
     sfr = pd.read_csv(lzlcs_sfr_filepath, delimiter = ",", usecols = [2], header = 0).to_numpy().flatten()[0:27]
     sfr_err = pd.read_csv(lzlcs_sfr_filepath, delimiter = ",", usecols = [3], header = 0).to_numpy().flatten()[0:27]
 
-    data = np.column_stack((mass, mass_err, sfr, sfr_err, Z, Z_err_up, Z_err_down, log_Ne_O, log_Ne_O_err_up, log_Ne_O_err_down))
-    np.savetxt("lzlcsextras.csv", data, delimiter = ",", header = "mass, mass_err, sfr, sfr_err, Z, Z_err_up, Z_err_down, log_Ne_O, log_Ne_O_err_up, log_Ne_O_err_down")
+    data = np.column_stack((names, mass, mass_err, sfr, sfr_err, T_e_o_iii, T_e_s_iii, T_e_o_ii, Z, Z_err_up, Z_err_down, log_Ne_O, log_Ne_O_err_up, log_Ne_O_err_down))
+
+    df = pd.DataFrame(data, columns = ["galaxy", "mass", "mass_err", "sfr", 
+                                    "sfr_err", "T_e_o_iii", "T_e_s_iii", 
+                                    "T_e_o_ii", "Z", "Z_err_up", "Z_err_down",  
+                                    "log_Ne_O", "log_Ne_O_err_up", "log_Ne_O_err_down"])
+    
+    df.to_csv("lzlcsextras.csv", index=False)
 
 def main():
     CLASSY()
