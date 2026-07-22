@@ -15,6 +15,7 @@ def metallicity(a_0, a_1, a_2, a_3, x):
 def error(e_0, e_1, e_2, x):
     """Derive the polynomial parameterisation of the dispersion (sigma) from the strong line 
     ratios, where the error on the metallicity is given as 1*sigma"""
+    ####DISUSED
 
     sigma = e_0 + (e_1 * x) + (e_2 * x**2)
 
