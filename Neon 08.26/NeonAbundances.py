@@ -37,7 +37,7 @@ def main():
     colorbar = plt.colorbar(plot)
     colorbar.set_label(r"O32")
 
-    plt.axhline(np.log10(0.24), color = "red", label = "Solar abundance") #(Asplund+2021)
+    plt.axhline(np.log10(0.24), color = "red", label = "Solar abundance \n (Asplund+2021)") #(Asplund+2021)
     plt.legend()
     plt.tight_layout()
     plt.savefig("Ne-OH.png")
@@ -52,6 +52,6 @@ def main():
                                            "O32"])
         
     df.to_csv("Neondata060826.csv", index=False)
-    
+
 main()
 
