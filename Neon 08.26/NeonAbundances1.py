@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pyneb as pn
 
-def icf_ne(Z, w):
+def icf_ne_isotov(Z, w):
     """ICF for neon as function of w (O2+/(O+ + O2+)) and 
     metallicity from Isotov 2006"""
 
@@ -12,6 +12,14 @@ def icf_ne(Z, w):
     choices = [-0.385*w + 1.365 + 0.022/w, -0.591*w + 0.927 + 0.546/w]
 
     return np.select(conditions, choices, default = -0.405*w + 1.382 + 0.021/w)
+
+def icf_ne_amayo(w):
+    """ICF for neon as function of w (O2+/(O+ + O2+)) from Amayo 2021. Will not
+    use uncertainty estimates from paper, instead use Monte Carlo"""
+
+    icf = 10 ** (-0.557 + 4.237 * w - 8.564 * w ** 2 + 
+                 4.834 * w ** 3 + 2.284 * w ** 4 - 2.239 * w ** 5)
+    return icf
 
 def fix_nan_issues(array):
     """Replace missing data in the LzLCS dataset from -999.999 to nan"""
@@ -142,8 +150,8 @@ def LzLCS():
     w = OIII/(OIII + OII)
 
     #Elemental abundances relative to oxygen
-    Ne_O = (NeIII / OIII) * icf_ne(Z = Z, w = w)
-
+    Ne_O = (NeIII / OIII) * icf_ne_isotov(Z = Z, w = w)
+    Ne_O = (NeIII / OIII) * icf_ne_amayo(w = w)
     #Get errors on abundances avec Monte Carlo
 
     #Empty arrays to store datums
@@ -249,7 +257,7 @@ def LzLCS():
                                     "log_Ne_O", "log_Ne_O_err_up", "log_Ne_O_err_down",
                                     "ion_param", "ion_param_err_up", "ion_param_err_down"])
     
-    df.to_csv("lzlcsextras.csv", index=False)
+    df.to_csv("amayo.csv", index=False)
 
 def main():
     LzLCS()

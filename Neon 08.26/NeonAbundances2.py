@@ -9,7 +9,7 @@ def main():
     colour-coded to the O32 emission line ratio, which traces the ionisation parameter"""
 
     lzlcs_cel = r"C:\Users\drcla\OneDrive\Senior Honours Project\Neon 08.26\Final_LYC_EMISSION_LINES_David.xlsx"
-    lzlcs_abundance = r"C:\Users\drcla\OneDrive\Senior Honours Project\Neon 08.26\lzlcsextras.csv"
+    lzlcs_abundance = r"C:\Users\drcla\OneDrive\Senior Honours Project\Neon 08.26\amayo.csv" #Data from using Amayo ICF
 
     names = pd.read_excel(lzlcs_cel, usecols = "A", skiprows = 0).to_numpy().flatten()[0:26]
     o_ii_3727 = pd.read_excel(lzlcs_cel, usecols = "J", skiprows = 0).to_numpy().flatten()[0:26]
@@ -45,6 +45,7 @@ def main():
                  elinewidth = 0.7, alpha = 0.6, zorder = 1)
     plt.xlabel(r"$12 + log_{10}(O/H)$", fontsize = 12)
     plt.ylabel(r"$log_{10}(Ne/O)$", fontsize = 12)
+    plt.title(r"Amayo ICF")
 
     colorbar = plt.colorbar(plot)
     colorbar.set_label(r"O32")
@@ -53,7 +54,7 @@ def main():
     plt.axvline(8.2, color = "orange", label = "Isotov+2006 boundary")
     plt.legend()
     plt.tight_layout()
-    plt.savefig("Ne-OH.png")
+    plt.savefig("Ne-OH_Amayo.png")
     plt.show()
 
     plot = plt.scatter(O32, Ne, s = 20, c = Z, ls = "", cmap = "viridis")
@@ -61,6 +62,7 @@ def main():
                 elinewidth = 0.7, alpha = 0.6, zorder = 1)
     plt.xlabel(r"O32", fontsize = 12)
     plt.ylabel(r"$log_{10}(Ne/O)$", fontsize = 12)
+    plt.title(r"Amayo ICF")
     
     colorbar = plt.colorbar(plot)
     colorbar.set_label(r"$12 + log_{10}(O/H)$")
@@ -68,7 +70,7 @@ def main():
     plt.axhline(np.log10(0.24), color = "red", label = "Solar abundance \n (Asplund+2021)") #(Asplund+2021)
     plt.legend()
     plt.tight_layout()
-    plt.savefig("Ne-O32.png")
+    plt.savefig("Ne-O32_Amayo.png")
     plt.show()
 
     #Split data into three bins based on metallicity
@@ -81,13 +83,14 @@ def main():
                  elinewidth = 0.7, alpha = 0.6, zorder = 1)
     plt.xlabel(r"$O^{++}/(O^+ + O^{++})$", fontsize = 12)
     plt.ylabel(r"$log_{10}(Ne/O)$", fontsize = 12)
+    plt.title(r"Amayo ICF")
     
     plt.axhline(np.log10(0.24), color = "red", label = "Solar abundance \n (Asplund+2021)") #(Asplund+2021)
     plt.xlim(0, 1)
     plt.ylim(-1.0, -0.2)
     plt.legend()
     plt.tight_layout()
-    plt.savefig("Ne-ip.png")
+    plt.savefig("Ne-ip_Amayo.png")
     plt.show()
 
     #Save data
@@ -100,7 +103,7 @@ def main():
                                            "O32", "O32_err", "ion_param", "ion_param_err_up",
                                            "ion_param_err_down"])
         
-    df.to_csv("Neondata130826.csv", index=False)
+    df.to_csv("Neondata150826.csv", index=False)
 
 main()
 
